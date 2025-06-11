@@ -1,0 +1,28 @@
+# Visual Studio
+.vs/
+*.vcxproj.user
+*.suo
+*.user
+*.cache
+*.pdb
+*.obj
+*.log
+*.tlog
+*.ipch
+*.idb
+*.exe
+*.dll
+*.lib
+*.exp
+*.zip
+
+# Build output
+x64/
+Release/
+Debug/
+
+# Backup files
+*.bak
+*.old
+*.orig
+*.tmp
