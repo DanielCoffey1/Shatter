@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{574e69cb-3fde-4dad-b0da-bc2e629e7fc1}</ProjectGuid>
+    <ProjectGuid>{cf528354-91d0-45cc-a081-127c39ecc67e}</ProjectGuid>
     <RootNamespace>Shatter</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
