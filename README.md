@@ -1,84 +1,41 @@
-# 💥 Shatter
+# Shatter
 
-**Shatter** is a lightweight Windows utility that gives you fast, no-compromise control over unresponsive or stubborn applications. With a simple hotkey, you can instantly terminate any program — no task manager, no dialogs, no fuss.
+**Shatter** is a lightweight Windows tray application that adds "xkill"-style functionality to your PC.
 
----
+## 🔥 Features
 
-## ⚙️ Features
+- 🖱️ Kill the foreground window with **Ctrl + Alt + F4**
+- 🧠 Prevent killing protected processes like `explorer.exe`
+- 🛠️ Enable/disable kill hotkey with a tray menu checkbox
+- 🚀 Optional autostart with Windows via the registry
+- 📁 INI-based configuration
 
-- 🔥 **Instant-kill** hotkey: Terminate the currently focused window immediately
-- 🎯 **Xkill mode**: Click any window on your screen to forcefully close it
-- 🧼 Runs in the background without a visible window or tray icon
-- 🪶 Minimal footprint — no dependencies, no installation needed
+## 📦 Installation
 
----
+1. Download the latest release or build from source
+2. Run `Shatter.exe`
+3. Right-click the tray icon to configure options
 
-## 🖥️ Usage
+## 🔧 Configuration
 
-| Hotkey            | Action                                 |
-|------------------|----------------------------------------|
-| `Ctrl + Alt + F4` | Kill the currently focused window      |
-| `Win + F4`        | Enter xkill mode – click a window to kill it |
+Located in `Shatter.ini`:
 
-- In **xkill mode**:
-  - **Left-click** to terminate a window
-  - **Right-click** to cancel the action
+```ini
+[Options]
+EnableXKill=1
+```
 
----
+## 🗑️ Kill Hotkey
 
-## 🚀 Getting Started
+By default, `Ctrl + Alt + F4` will terminate the currently focused window — unless it's blacklisted (e.g. `explorer.exe`).
 
-### ✅ Requirements
-- Windows 7 or later (x64)
-- Administrator rights only if terminating protected processes
+## 🪟 Autostart with Windows
 
-### 🛠️ Building from Source
-1. Open the solution in **Visual Studio**
-2. Set the subsystem to **Windows**:
-   - `Project → Properties → Linker → System → Subsystem → Windows`
-3. Build the project
-4. Run `Shatter.exe`
+Enable or disable from the tray menu:
+✔️ Start with Windows
 
 ---
 
-## 🔧 Technical Notes
-
-- Uses the Windows API (`RegisterHotKey`, `TerminateProcess`, etc.)
-- Operates silently via hotkeys and system hooks
-- Does **not** ask applications to close — it terminates their processes directly
-- No background services, console windows, or GUI components required
-
----
-
-## ⚠️ Caution
-
-- **No warning or confirmation** — Shatter kills processes instantly
-- May cause data loss in unsaved applications
-- Avoid terminating critical system processes (e.g. `explorer.exe`, `winlogon.exe`)
-
-Use responsibly.
-
----
-
-## 📦 Roadmap Ideas
-
-- [ ] Optional tray icon with exit control
-- [ ] Config file for custom hotkeys
-- [ ] Safety blacklist to prevent accidental system process termination
-- [ ] Visual feedback in xkill mode
-- [ ] Elevation handling for protected apps
-
----
-
-## 📄 License
-
-Shatter is released under a **custom Non-Commercial Share-Alike license**.
-
-- ✅ Free to use, modify, and share
-- ❌ Not allowed for commercial use or resale
-- 🔁 Must share source and license if redistributed
-
-See [`LICENSE.txt`](./LICENSE.txt) for full details.  
-For commercial use, contact: daniel.coffey11@gmail.com
-
----
+Made by Daniel Coffey  
+📧 daniel.coffey11@gmail.com  
+🔒 Custom license: personal, non-commercial use only

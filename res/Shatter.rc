@@ -1,0 +1,2 @@
+#include "resource.h"
+IDI_SHATTER_ICON ICON "res/shatter_icon_clean.ico"

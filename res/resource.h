@@ -1,0 +1,1 @@
+#define IDI_SHATTER_ICON 101
