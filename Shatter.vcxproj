@@ -1,42 +1,62 @@
 <Project DefaultTargets="Build" ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug|x64">
-      <Configuration>Debug</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-  </ItemGroup>
-  <PropertyGroup Label="Globals">
-    <ProjectGuid>{12345678-90AB-CDEF-1234-567890ABCDEF}</ProjectGuid>
-    <Keyword>Win32Proj</Keyword>
-    <RootNamespace>Shatter</RootNamespace>
-  </PropertyGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-  </PropertyGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <ItemGroup>
-    <ClCompile Include="src\Shatter.cpp" />
-    <ResourceCompile Include="res\Shatter.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="res\resource.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Shatter.ini" />
-  </ItemGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <PropertyGroup>
-    <IncludePath>$(ProjectDir)res;$(IncludePath)</IncludePath>
-  </PropertyGroup>
-  <ItemDefinitionGroup>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>Psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
-    </Link>
-  </ItemDefinitionGroup>
+	<ItemGroup Label="ProjectConfigurations">
+		<ProjectConfiguration Include="Debug|x64">
+			<Configuration>Debug</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|x64">
+			<Configuration>Release</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+	</ItemGroup>
+
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{12345678-90AB-CDEF-1234-567890ABCDEF}</ProjectGuid>
+		<Keyword>Win32Proj</Keyword>
+		<RootNamespace>Shatter</RootNamespace>
+	</PropertyGroup>
+
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+		<ConfigurationType>Application</ConfigurationType>
+		<UseDebugLibraries>true</UseDebugLibraries>
+		<PlatformToolset>v143</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+		<ConfigurationType>Application</ConfigurationType>
+		<UseDebugLibraries>false</UseDebugLibraries>
+		<PlatformToolset>v143</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+
+	<ItemGroup>
+		<ClCompile Include="src\Shatter.cpp" />
+		<ResourceCompile Include="res\Shatter.rc" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ClInclude Include="res\resource.h" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="Shatter.ini" />
+	</ItemGroup>
+
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+
+	<PropertyGroup>
+		<IncludePath>$(ProjectDir)res;$(IncludePath)</IncludePath>
+	</PropertyGroup>
+
+	<ItemDefinitionGroup>
+		<Link>
+			<SubSystem>Windows</SubSystem>
+			<AdditionalDependencies>Psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+		</Link>
+	</ItemDefinitionGroup>
 </Project>
