@@ -344,6 +344,17 @@ INT_PTR CALLBACK HotkeyDialogProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPa
     switch (msg) {
     case WM_INITDIALOG:
         {
+            // Center the window on the screen
+            RECT rcDlg;
+            GetWindowRect(hwnd, &rcDlg);
+            int screenWidth = GetSystemMetrics(SM_CXSCREEN);
+            int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+            int dlgWidth = rcDlg.right - rcDlg.left;
+            int dlgHeight = rcDlg.bottom - rcDlg.top;
+            int newX = (screenWidth - dlgWidth) / 2;
+            int newY = (screenHeight - dlgHeight) / 2;
+            SetWindowPos(hwnd, HWND_TOP, newX, newY, 0, 0, SWP_NOSIZE);
+
             UINT mod1, vk1, mod2, vk2;
             ParseKeybind(ReadKeybindFromIni(L"KillForeground", L"Ctrl+Alt+F4"), mod1, vk1);
             ParseKeybind(ReadKeybindFromIni(L"ClickKill", L"Ctrl+Alt+X"), mod2, vk2);
