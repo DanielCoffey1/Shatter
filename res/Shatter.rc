@@ -1,2 +1,16 @@
+#include <windows.h>
 #include "resource.h"
-IDI_SHATTER_ICON ICON "res/shatter_icon_clean.ico"
+IDI_SHATTER_ICON ICON "shatter_icon_clean.ico"
+
+IDD_HOTKEY_CONFIG DIALOGEX 0, 0, 240, 80
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Configure Hotkeys"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "Kill Foreground Window:", -1, 10, 15, 100, 8
+    CONTROL         "", IDC_HOTKEY_KILL, "msctls_hotkey32", WS_BORDER | WS_TABSTOP, 120, 12, 100, 14
+    LTEXT           "Click-to-Kill Mode:", -1, 10, 35, 100, 8
+    CONTROL         "", IDC_HOTKEY_CLICK, "msctls_hotkey32", WS_BORDER | WS_TABSTOP, 120, 32, 100, 14
+    DEFPUSHBUTTON   "OK", IDOK, 65, 55, 50, 14
+    PUSHBUTTON      "Cancel", IDCANCEL, 125, 55, 50, 14
+END
