@@ -274,6 +274,9 @@ void ParseKeybind(const std::wstring& keybind, UINT& modifiers, UINT& vk) {
     modifiers = 0;
     vk = 0;
     std::wstring s = keybind;
+    if (s.empty() || s == L"None") {
+        return;
+    }
     for (auto& c : s) c = towupper(c);
 
     if (s.find(L"CTRL+") != std::wstring::npos) modifiers |= MOD_CONTROL;
@@ -298,8 +301,13 @@ std::wstring ReadKeybindFromIni(const wchar_t* key, const wchar_t* def) {
 }
 
 std::wstring HotkeyToString(LPARAM hotkey) {
-    UINT vk = LOWORD(hotkey);
-    UINT modifiers = HIWORD(hotkey);
+    UINT vk = LOBYTE(LOWORD(hotkey));
+    UINT modifiers = HIBYTE(LOWORD(hotkey));
+
+    if (vk == 0) {
+        return L"None";
+    }
+
     std::wstring s = L"";
     if (modifiers & HOTKEYF_CONTROL) s += L"Ctrl+";
     if (modifiers & HOTKEYF_ALT) s += L"Alt+";
@@ -314,7 +322,13 @@ std::wstring HotkeyToString(LPARAM hotkey) {
     if (iswalpha(vk) || iswdigit(vk)) {
         s += (wchar_t)vk;
     }
-    return s;
+    
+    size_t pos = s.rfind(L'+');
+    if (pos != std::wstring::npos && pos == s.length() - 1) {
+        return L"None";
+    }
+
+    return s.empty() ? L"None" : s;
 }
 
 UINT ConvertModToHotkeyf(UINT mod) {
@@ -334,8 +348,8 @@ void ReRegisterHotkeys(HWND hwnd) {
     ParseKeybind(ReadKeybindFromIni(L"KillForeground", L"Ctrl+Alt+F4"), mod1, vk1);
     ParseKeybind(ReadKeybindFromIni(L"ClickKill", L"Ctrl+Alt+X"), mod2, vk2);
 
-    RegisterHotKey(hwnd, 1, mod1, vk1);
-    RegisterHotKey(hwnd, 2, mod2, vk2);
+    if (vk1 != 0) RegisterHotKey(hwnd, 1, mod1, vk1);
+    if (vk2 != 0) RegisterHotKey(hwnd, 2, mod2, vk2);
 
     UpdateTrayMenu();
 }
