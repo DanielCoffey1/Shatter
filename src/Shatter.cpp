@@ -3,6 +3,7 @@
 #include <shellapi.h>
 #include <psapi.h>
 #include <string>
+#include <map>
 #include "resource.h"
 
 // Function to get the full path of the INI file located next to the executable
@@ -95,71 +96,55 @@ void KillForegroundWindow() {
     KillWindow(hwnd);
 }
 
+void ExitClickKillMode() {
+    clickKillMode = false;
+
+    // Update tray menu to show click-kill mode is inactive
+    CheckMenuItem(hTrayMenu, ID_TRAY_CLICK_KILL, MF_BYCOMMAND | MF_UNCHECKED);
+
+    // Restore the normal arrow cursor
+    HCURSOR arrowCursor = LoadCursor(NULL, IDC_ARROW);
+    SetCursor(arrowCursor);
+
+    // Restore normal notification
+    nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
+    wcscpy_s(nid.szTip, L"Shatter");
+    Shell_NotifyIcon(NIM_MODIFY, &nid);
+
+    // Destroy overlay window
+    DestroyOverlayWindow();
+
+    // Kill the timer
+    KillTimer(NULL, 1);
+
+    // Unhook mouse and cursor hooks
+    if (mouseHook) {
+        UnhookWindowsHookEx(mouseHook);
+        mouseHook = NULL;
+    }
+    if (cursorHook) {
+        UnhookWindowsHookEx(cursorHook);
+        cursorHook = NULL;
+    }
+}
+
 LRESULT CALLBACK LowLevelMouseProc(int nCode, WPARAM wParam, LPARAM lParam) {
     if (nCode == HC_ACTION && clickKillMode) {
         // Force the cursor to be our custom cursor on every mouse event
         if (g_crosshairCursor) {
             SetCursor(g_crosshairCursor);
         }
-        
+
         if (wParam == WM_LBUTTONDOWN) {
             POINT pt;
             GetCursorPos(&pt);
             HWND target = WindowFromPoint(pt);
             KillWindow(target);
-            clickKillMode = false;
-            
-            // Update tray menu to show click-kill mode is inactive
-            CheckMenuItem(hTrayMenu, ID_TRAY_CLICK_KILL, MF_BYCOMMAND | MF_UNCHECKED);
-            
-            // Restore the normal arrow cursor
-            HCURSOR arrowCursor = LoadCursor(NULL, IDC_ARROW);
-            SetCursor(arrowCursor);
-            
-            // Restore normal notification
-            nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
-            wcscpy_s(nid.szTip, L"Shatter");
-            Shell_NotifyIcon(NIM_MODIFY, &nid);
-            
-            // Destroy overlay window
-            DestroyOverlayWindow();
-            
-            // Kill the timer
-            KillTimer(NULL, 1);
-            
-            UnhookWindowsHookEx(mouseHook);
-            if (cursorHook) {
-                UnhookWindowsHookEx(cursorHook);
-                cursorHook = NULL;
-            }
+            ExitClickKillMode();
         }
         else if (wParam == WM_RBUTTONDOWN) {
             // Cancel click-kill mode with right-click
-            clickKillMode = false;
-            
-            // Update tray menu to show click-kill mode is inactive
-            CheckMenuItem(hTrayMenu, ID_TRAY_CLICK_KILL, MF_BYCOMMAND | MF_UNCHECKED);
-            
-            // Restore the normal arrow cursor
-            HCURSOR arrowCursor = LoadCursor(NULL, IDC_ARROW);
-            SetCursor(arrowCursor);
-            
-            // Restore normal notification
-            nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
-            wcscpy_s(nid.szTip, L"Shatter");
-            Shell_NotifyIcon(NIM_MODIFY, &nid);
-            
-            // Destroy overlay window
-            DestroyOverlayWindow();
-            
-            // Kill the timer
-            KillTimer(NULL, 1);
-            
-            UnhookWindowsHookEx(mouseHook);
-            if (cursorHook) {
-                UnhookWindowsHookEx(cursorHook);
-                cursorHook = NULL;
-            }
+            ExitClickKillMode();
         }
     }
     return CallNextHookEx(mouseHook, nCode, wParam, lParam);
@@ -373,122 +358,63 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 // Helper to parse keybind string like "Ctrl+Alt+F4" into modifier and key
 void ParseKeybind(const std::wstring& keybind, UINT& modifiers, UINT& vk) {
+    // Map of key names to virtual key codes
+    static const std::map<std::wstring, UINT> keyMap = {
+        // Function keys
+        {L"F1", VK_F1}, {L"F2", VK_F2}, {L"F3", VK_F3}, {L"F4", VK_F4},
+        {L"F5", VK_F5}, {L"F6", VK_F6}, {L"F7", VK_F7}, {L"F8", VK_F8},
+        {L"F9", VK_F9}, {L"F10", VK_F10}, {L"F11", VK_F11}, {L"F12", VK_F12},
+        // Numbers
+        {L"0", '0'}, {L"1", '1'}, {L"2", '2'}, {L"3", '3'}, {L"4", '4'},
+        {L"5", '5'}, {L"6", '6'}, {L"7", '7'}, {L"8", '8'}, {L"9", '9'},
+        // Letters
+        {L"A", 'A'}, {L"B", 'B'}, {L"C", 'C'}, {L"D", 'D'}, {L"E", 'E'},
+        {L"F", 'F'}, {L"G", 'G'}, {L"H", 'H'}, {L"I", 'I'}, {L"J", 'J'},
+        {L"K", 'K'}, {L"L", 'L'}, {L"M", 'M'}, {L"N", 'N'}, {L"O", 'O'},
+        {L"P", 'P'}, {L"Q", 'Q'}, {L"R", 'R'}, {L"S", 'S'}, {L"T", 'T'},
+        {L"U", 'U'}, {L"V", 'V'}, {L"W", 'W'}, {L"X", 'X'}, {L"Y", 'Y'},
+        {L"Z", 'Z'},
+        // Special keys
+        {L"SPACE", VK_SPACE}, {L"ENTER", VK_RETURN}, {L"TAB", VK_TAB},
+        {L"ESC", VK_ESCAPE}, {L"BACKSPACE", VK_BACK}, {L"DELETE", VK_DELETE},
+        {L"INSERT", VK_INSERT}, {L"HOME", VK_HOME}, {L"END", VK_END},
+        {L"PAGEUP", VK_PRIOR}, {L"PAGEDOWN", VK_NEXT},
+        {L"UP", VK_UP}, {L"DOWN", VK_DOWN}, {L"LEFT", VK_LEFT}, {L"RIGHT", VK_RIGHT},
+        // Numpad keys
+        {L"NUMPAD0", VK_NUMPAD0}, {L"NUMPAD1", VK_NUMPAD1}, {L"NUMPAD2", VK_NUMPAD2},
+        {L"NUMPAD3", VK_NUMPAD3}, {L"NUMPAD4", VK_NUMPAD4}, {L"NUMPAD5", VK_NUMPAD5},
+        {L"NUMPAD6", VK_NUMPAD6}, {L"NUMPAD7", VK_NUMPAD7}, {L"NUMPAD8", VK_NUMPAD8},
+        {L"NUMPAD9", VK_NUMPAD9}, {L"NUMPADMULTIPLY", VK_MULTIPLY}, {L"NUMPADADD", VK_ADD},
+        {L"NUMPADSUBTRACT", VK_SUBTRACT}, {L"NUMPADDECIMAL", VK_DECIMAL},
+        {L"NUMPADDIVIDE", VK_DIVIDE},
+        // Other keys
+        {L"SEMICOLON", VK_OEM_1}, {L"PLUS", VK_OEM_PLUS}, {L"COMMA", VK_OEM_COMMA},
+        {L"MINUS", VK_OEM_MINUS}, {L"PERIOD", VK_OEM_PERIOD}, {L"SLASH", VK_OEM_2},
+        {L"BACKTICK", VK_OEM_3}, {L"LBRACKET", VK_OEM_4}, {L"BACKSLASH", VK_OEM_5},
+        {L"RBRACKET", VK_OEM_6}, {L"QUOTE", VK_OEM_7}
+    };
+
     modifiers = 0;
     vk = 0;
     std::wstring s = keybind;
     // Convert to uppercase for easier comparison
     for (auto& c : s) c = towupper(c);
-    
+
     // Parse modifiers
     if (s.find(L"CTRL+") != std::wstring::npos) modifiers |= MOD_CONTROL;
     if (s.find(L"ALT+") != std::wstring::npos) modifiers |= MOD_ALT;
     if (s.find(L"SHIFT+") != std::wstring::npos) modifiers |= MOD_SHIFT;
     if (s.find(L"WIN+") != std::wstring::npos) modifiers |= MOD_WIN;
-    
+
     // Find the key part (after last '+')
     size_t pos = s.rfind(L'+');
     std::wstring key = (pos != std::wstring::npos) ? s.substr(pos + 1) : s;
-    
-    // Function keys
-    if (key == L"F1") vk = VK_F1;
-    else if (key == L"F2") vk = VK_F2;
-    else if (key == L"F3") vk = VK_F3;
-    else if (key == L"F4") vk = VK_F4;
-    else if (key == L"F5") vk = VK_F5;
-    else if (key == L"F6") vk = VK_F6;
-    else if (key == L"F7") vk = VK_F7;
-    else if (key == L"F8") vk = VK_F8;
-    else if (key == L"F9") vk = VK_F9;
-    else if (key == L"F10") vk = VK_F10;
-    else if (key == L"F11") vk = VK_F11;
-    else if (key == L"F12") vk = VK_F12;
-    
-    // Numbers
-    else if (key == L"0") vk = '0';
-    else if (key == L"1") vk = '1';
-    else if (key == L"2") vk = '2';
-    else if (key == L"3") vk = '3';
-    else if (key == L"4") vk = '4';
-    else if (key == L"5") vk = '5';
-    else if (key == L"6") vk = '6';
-    else if (key == L"7") vk = '7';
-    else if (key == L"8") vk = '8';
-    else if (key == L"9") vk = '9';
-    
-    // Letters
-    else if (key == L"A") vk = 'A';
-    else if (key == L"B") vk = 'B';
-    else if (key == L"C") vk = 'C';
-    else if (key == L"D") vk = 'D';
-    else if (key == L"E") vk = 'E';
-    else if (key == L"F") vk = 'F';
-    else if (key == L"G") vk = 'G';
-    else if (key == L"H") vk = 'H';
-    else if (key == L"I") vk = 'I';
-    else if (key == L"J") vk = 'J';
-    else if (key == L"K") vk = 'K';
-    else if (key == L"L") vk = 'L';
-    else if (key == L"M") vk = 'M';
-    else if (key == L"N") vk = 'N';
-    else if (key == L"O") vk = 'O';
-    else if (key == L"P") vk = 'P';
-    else if (key == L"Q") vk = 'Q';
-    else if (key == L"R") vk = 'R';
-    else if (key == L"S") vk = 'S';
-    else if (key == L"T") vk = 'T';
-    else if (key == L"U") vk = 'U';
-    else if (key == L"V") vk = 'V';
-    else if (key == L"W") vk = 'W';
-    else if (key == L"X") vk = 'X';
-    else if (key == L"Y") vk = 'Y';
-    else if (key == L"Z") vk = 'Z';
-    
-    // Special keys
-    else if (key == L"SPACE") vk = VK_SPACE;
-    else if (key == L"ENTER") vk = VK_RETURN;
-    else if (key == L"TAB") vk = VK_TAB;
-    else if (key == L"ESC") vk = VK_ESCAPE;
-    else if (key == L"BACKSPACE") vk = VK_BACK;
-    else if (key == L"DELETE") vk = VK_DELETE;
-    else if (key == L"INSERT") vk = VK_INSERT;
-    else if (key == L"HOME") vk = VK_HOME;
-    else if (key == L"END") vk = VK_END;
-    else if (key == L"PAGEUP") vk = VK_PRIOR;
-    else if (key == L"PAGEDOWN") vk = VK_NEXT;
-    else if (key == L"UP") vk = VK_UP;
-    else if (key == L"DOWN") vk = VK_DOWN;
-    else if (key == L"LEFT") vk = VK_LEFT;
-    else if (key == L"RIGHT") vk = VK_RIGHT;
-    
-    // Numpad keys
-    else if (key == L"NUMPAD0") vk = VK_NUMPAD0;
-    else if (key == L"NUMPAD1") vk = VK_NUMPAD1;
-    else if (key == L"NUMPAD2") vk = VK_NUMPAD2;
-    else if (key == L"NUMPAD3") vk = VK_NUMPAD3;
-    else if (key == L"NUMPAD4") vk = VK_NUMPAD4;
-    else if (key == L"NUMPAD5") vk = VK_NUMPAD5;
-    else if (key == L"NUMPAD6") vk = VK_NUMPAD6;
-    else if (key == L"NUMPAD7") vk = VK_NUMPAD7;
-    else if (key == L"NUMPAD8") vk = VK_NUMPAD8;
-    else if (key == L"NUMPAD9") vk = VK_NUMPAD9;
-    else if (key == L"NUMPADMULTIPLY") vk = VK_MULTIPLY;
-    else if (key == L"NUMPADADD") vk = VK_ADD;
-    else if (key == L"NUMPADSUBTRACT") vk = VK_SUBTRACT;
-    else if (key == L"NUMPADDECIMAL") vk = VK_DECIMAL;
-    else if (key == L"NUMPADDIVIDE") vk = VK_DIVIDE;
-    
-    // Other keys
-    else if (key == L"SEMICOLON") vk = VK_OEM_1;
-    else if (key == L"PLUS") vk = VK_OEM_PLUS;
-    else if (key == L"COMMA") vk = VK_OEM_COMMA;
-    else if (key == L"MINUS") vk = VK_OEM_MINUS;
-    else if (key == L"PERIOD") vk = VK_OEM_PERIOD;
-    else if (key == L"SLASH") vk = VK_OEM_2;
-    else if (key == L"BACKTICK") vk = VK_OEM_3;
-    else if (key == L"LBRACKET") vk = VK_OEM_4;
-    else if (key == L"BACKSLASH") vk = VK_OEM_5;
-    else if (key == L"RBRACKET") vk = VK_OEM_6;
-    else if (key == L"QUOTE") vk = VK_OEM_7;
+
+    // Look up the key in the map
+    auto it = keyMap.find(key);
+    if (it != keyMap.end()) {
+        vk = it->second;
+    }
 }
 
 // Helper to read a keybind from INI
