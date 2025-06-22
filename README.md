@@ -23,7 +23,20 @@
 
 ## 🔧 Configuration & Hotkeys
 
-You can customize Shatter's hotkeys by editing the `Shatter.ini` file located in the same directory as the executable.
+Shatter provides two ways to configure your hotkeys:
+
+### 1. Using the Configuration Dialog (Recommended)
+
+The easiest way to change your hotkeys is through the built-in configuration window:
+
+1.  Right-click the **Shatter** icon in your system tray.
+2.  Select **"Configure Hotkeys..."**.
+3.  Click inside the input fields and press your desired key combinations.
+4.  Click **"OK"** to save. Your new hotkeys will be active immediately.
+
+### 2. Editing the INI File
+
+For manual control, you can edit the `Shatter.ini` file located in the same directory as the executable.
 
 ```ini
 [Hotkeys]
@@ -34,7 +47,7 @@ KillForeground=Ctrl+Alt+F4
 ClickKill=Ctrl+Alt+X
 ```
 
-Simply change the key strings, save the file, and restart the application for your new hotkeys to take effect.
+After saving your changes to the `.ini` file, you must restart the application for them to take effect.
 
 ---
 
