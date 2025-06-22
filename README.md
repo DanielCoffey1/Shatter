@@ -1,41 +1,56 @@
 # Shatter
 
-**Shatter** is a lightweight Windows tray application that adds "xkill"-style functionality to your PC.
+**Shatter** is a lightweight Windows tray utility that brings powerful, Linux-style window-killing functionality to your PC. Inspired by `xkill`, it allows you to instantly terminate unresponsive applications with a simple hotkey.
 
 ## 🔥 Features
 
-- 🖱️ Kill the foreground window with **Ctrl + Alt + F4**
-- 🧠 Prevent killing protected processes like `explorer.exe`
-- 🛠️ Enable/disable kill hotkey with a tray menu checkbox
-- 🚀 Optional autostart with Windows via the registry
-- 📁 INI-based configuration
+- **Kill Foreground Window**: Instantly close the active window.
+  - Default Hotkey: `Ctrl+Alt+F4`
+- **Click-to-Kill Mode**: Activate a special mode to select and terminate any window with a mouse click.
+  - Default Hotkey: `Ctrl+Alt+X`
+  - A red overlay appears to clearly indicate that the mode is active.
+- **Customizable Hotkeys**: Easily change the default keybinds by editing the `Shatter.ini` file. Supports a wide range of keys and modifiers.
+- **Process Protection**: Prevents you from accidentally killing critical system processes like `explorer.exe`.
+- **Tray Integration**: Runs quietly in the system tray. Right-click the icon to enable/disable features or exit the application.
+- **Autostart with Windows**: Conveniently set Shatter to start automatically when you log in.
 
 ## 📦 Installation
 
-1. Download the latest release or build from source
-2. Run `Shatter.exe`
-3. Right-click the tray icon to configure options
+1.  Download the latest `Shatter.exe` from the [Releases](https://github.com/dcoffey1/Shatter/releases) page.
+2.  Place `Shatter.exe` and `Shatter.ini` in the same folder.
+3.  Run `Shatter.exe`.
+4.  (Optional) Right-click the tray icon and select "Start with Windows" to enable autostart.
 
-## 🔧 Configuration
+## 🔧 Configuration & Hotkeys
 
-Located in `Shatter.ini`:
+Shatter provides two ways to configure your hotkeys:
+
+### 1. Using the Configuration Dialog (Recommended)
+
+The easiest way to change your hotkeys is through the built-in configuration window:
+
+1.  Right-click the **Shatter** icon in your system tray.
+2.  Select **"Configure Hotkeys..."**.
+3.  Click inside the input fields and press your desired key combinations.
+4.  Click **"OK"** to save. Your new hotkeys will be active immediately.
+
+### 2. Editing the INI File
+
+For manual control, you can edit the `Shatter.ini` file located in the same directory as the executable.
 
 ```ini
-[Options]
-EnableXKill=1
+[Hotkeys]
+; Format: Modifier1+Modifier2+Key (e.g., Ctrl+Alt+F4)
+; Supported modifiers: Ctrl, Alt, Shift, Win
+; See the INI file for a full list of supported keys.
+KillForeground=Ctrl+Alt+F4
+ClickKill=Ctrl+Alt+X
 ```
 
-## 🗑️ Kill Hotkey
-
-By default, `Ctrl + Alt + F4` will terminate the currently focused window — unless it's blacklisted (e.g. `explorer.exe`).
-
-## 🪟 Autostart with Windows
-
-Enable or disable from the tray menu:
-✔️ Start with Windows
+After saving your changes to the `.ini` file, you must restart the application for them to take effect.
 
 ---
 
 Made by Daniel Coffey  
 📧 daniel.coffey11@gmail.com  
-🔒 Custom license: personal, non-commercial use only
+🔒 Licensed for personal, non-commercial use. See LICENSE.txt for details.
