@@ -2,6 +2,7 @@
 #include <winuser.h>
 #include <shellapi.h>
 #include <psapi.h>
+#include <shlobj.h>
 #include <string>
 #include <map>
 #include <commctrl.h>
@@ -71,6 +72,18 @@ INT_PTR CALLBACK HotkeyDialogProc(HWND, UINT, WPARAM, LPARAM);
 // Function Implementations
 
 std::wstring GetIniPath() {
+    wchar_t appDataPath[MAX_PATH] = {0};
+    if (SUCCEEDED(SHGetFolderPathW(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, appDataPath))) {
+        std::wstring path = appDataPath;
+        path += L"\\Shatter";
+        
+        // Create the directory if it doesn't exist
+        CreateDirectoryW(path.c_str(), NULL);
+        
+        return path + L"\\Shatter.ini";
+    }
+    
+    // Fallback to executable directory if AppData is not available
     wchar_t exePath[MAX_PATH] = {0};
     GetModuleFileNameW(NULL, exePath, MAX_PATH);
     std::wstring path = exePath;
@@ -78,7 +91,7 @@ std::wstring GetIniPath() {
     if (pos != std::wstring::npos) {
         return path.substr(0, pos + 1) + L"Shatter.ini";
     }
-    return L"Shatter.ini"; // Fallback
+    return L"Shatter.ini"; // Final fallback
 }
 
 bool IsAutostartEnabled() {
