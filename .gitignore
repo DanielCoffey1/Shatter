@@ -1,28 +1,49 @@
-# Visual Studio
+# ─────────────────────────────
+# Visual Studio Files
+# ─────────────────────────────
 .vs/
-*.vcxproj.user
 *.suo
 *.user
+*.vcxproj.user
 *.cache
-*.pdb
-*.obj
-*.log
-*.tlog
 *.ipch
 *.idb
-*.exe
+
+# ─────────────────────────────
+# Build Artifacts
+# ─────────────────────────────
+*.obj
+*.pdb
+*.ilk
+*.iobj
+*.log
+*.tlog
+*.exp
 *.dll
 *.lib
-*.exp
+*.exe
 *.zip
 
-# Build output
+# Allow release build output
+!Release/Shatter.exe
+
+# ─────────────────────────────
+# Output Folders
+# ─────────────────────────────
 x64/
 Release/
 Debug/
 
-# Backup files
+# ─────────────────────────────
+# Backup and Temp Files
+# ─────────────────────────────
 *.bak
 *.old
 *.orig
 *.tmp
+
+# ─────────────────────────────
+# Installer-specific ignores
+# ─────────────────────────────
+installer/*.exe
+installer/*.zip
