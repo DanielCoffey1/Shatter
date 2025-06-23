@@ -1,0 +1,19 @@
+Shatter Software License (Non-Commercial Share-Alike)
+
+Copyright © 2025 Daniel Coffey
+
+Permission is hereby granted to use, modify, and distribute the Shatter software under the following conditions:
+
+1. Non-Commercial Use Only
+   - You may not sell, rent, license, or otherwise use Shatter or its derivatives for commercial purposes without explicit written permission from the author.
+
+2. Attribution
+   - Any distribution of Shatter, modified or unmodified, must include clear attribution to the original author.
+
+3. Share Alike
+   - If you modify and distribute Shatter, you must release the modified version under the same license as this one, with source code available.
+
+4. No Warranty
+   - This software is provided “as is,” without warranty of any kind. The author is not liable for any damages arising from its use.
+
+For commercial licensing inquiries, please contact: daniel.coffey11@gmail.com
